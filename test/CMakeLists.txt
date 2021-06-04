@@ -12,7 +12,7 @@ IF (NOT WIN32)
     SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 ENDIF()
 
-add_executable (heapmap "../TinyGC.cpp" "../TinyGC.h" "heapmap.cpp" "../Common.h" "../GCObject.h" "../Visitor.h" "../Container.h" "../Work.h"  "../Tgc.h" "linknode.cpp")
-add_executable (linknode "../TinyGC.cpp" "../TinyGC.h" "linknode.cpp" "../Common.h" "../GCObject.h" "../Visitor.h" "../Container.h" "../Work.h"  "../Tgc.h" "linknode.cpp")
+add_executable (heapmap "../TinyGC.cpp" "../TinyGC.h" "heapmap.cpp" "../Common.h" "../GCObject.h" "../Visitor.h" "../Container.h" "../Work.h"  "../Tgc.h")
+add_executable (linknode "../TinyGC.cpp" "../TinyGC.h" "linknode.cpp" "../Common.h" "../GCObject.h" "../Visitor.h" "../Container.h" "../Work.h"  "../Tgc.h")
 
 
