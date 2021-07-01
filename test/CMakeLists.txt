@@ -7,9 +7,6 @@ project ("heapmap")
 
 IF (NOT WIN32)
     SET(CMAKE_CXX_FLAGS -pthread)
-    SET(CMAKE_BUILD_TYPE "Debug")
-    SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
-    SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 ENDIF()
 
 add_executable (heapmap "../TinyGC.cpp" "../TinyGC.h" "heapmap.cpp" "../Common.h" "../GCObject.h" "../Visitor.h" "../Container.h" "../Work.h"  "../Tgc.h")

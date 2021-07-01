@@ -6,8 +6,6 @@
 
 #pragma once
 
-#include "TinyGC.h"
-#include "Container.h"
-#include "GCObject.h"
 #include "Visitor.h"
 #include "Work.h"
+#include "Container.h"

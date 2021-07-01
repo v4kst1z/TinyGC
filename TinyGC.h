@@ -31,7 +31,6 @@ extern "C" void* __libc_stack_end;
 // Forward declarations
 class Visitor;
 class GarbageCollectedBase;
-class ThreadState;
 
 class TinyGC {
 public:
@@ -68,8 +67,8 @@ private:
 	class ThreadState {
 	public:
 		ThreadState(bool main = false) : stack_end_(nullptr),
-			thread_id_(std::this_thread::get_id()),
-			main_thread_ (main){
+		    main_thread_ (main),
+			thread_id_(std::this_thread::get_id()){
 			stack_start_ = GetStackStart(main_thread_);
 		}
 		void GetCurrentStackPosition();

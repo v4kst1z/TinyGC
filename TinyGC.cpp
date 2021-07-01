@@ -8,15 +8,12 @@
 #include "TinyGC.h"
 
 TinyGC::TinyGC() :
+    visitor_(new Visitor()),
+    gc_phase_(GCPhase::kNone),
     bytes_allocated_(0),
     size_of_objects_(0),
-    gc_phase_(GCPhase::kNone),
-    //head_(nullptr),
     gc_count_threshold_(120),
-    gc_bytes_threshold_(0x1000) {
-    visitor_ = new Visitor();
-}
-
+    gc_bytes_threshold_(0x1000) {}
 
 
 void TinyGC::Mark() {
@@ -58,6 +55,7 @@ void TinyGC::Sweep() {
             bytes_allocated_ -= root->obj_size_;
             size_of_objects_--;
             LOG("Object " << root << " is deleted!");
+            root->~GarbageCollectedBase();
             delete root;
         }
     }

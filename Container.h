@@ -2,17 +2,20 @@
 // Created by v4kst1z.
 //
 #pragma once
-#include "GCObject.h"
 #include <vector>
 #include <algorithm>
 #include <queue>
 #include <unordered_set>
 #include <unordered_map>
 
+#include "GCObject.h"
+
 class GarbageCollectedBase;
 
 template <typename T>
 class Member;
+
+class Visitor;
 
 template<typename T>
 class HeapVector final :public GarbageCollected<HeapVector<T>> {
@@ -58,6 +61,7 @@ public:
 private:
     Container vec_;
 };
+
 
 template <typename T>
 class HeapDeque final :public GarbageCollected<HeapDeque<T>> {
@@ -198,7 +202,7 @@ public:
                 return it->second->GetRaw();
             }
         }
-
+        return nullptr;
     }
 
     size_t size() {

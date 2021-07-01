@@ -44,13 +44,14 @@ int main() {
 	}
 	LOG("test end");
 	GarbageCollectedBase *p = MakeGarbageCollected<LinkedNode>(nullptr, 1);
+	vec->push_back(dynamic_cast<LinkedNode *>(p));
 	WorkThread t;
-	auto res = t.Run([]() {
+	auto res = t.Run([&]() {
 		LinkedNode* p = MakeGarbageCollected<LinkedNode>(nullptr, 1);
+		vec->push_back(p);
 		int sum = 123;
 		for (int id = 0; id < 1000; id++)
 			sum += id;
-			return sum;
 		});
 	t.join();
 	WorkThread t1;

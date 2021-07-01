@@ -2,8 +2,9 @@
 // Created by v4kst1z.
 //
 #pragma once
-#include "TinyGC.h"
 #include "Common.h"
+
+class Visitor;
 
 class GarbageCollectedBase {
 public:
@@ -14,10 +15,9 @@ public:
 	virtual void Trace(Visitor* visitor) const {}
 
 	int GetObjSize() { return obj_size_; }
-
+	virtual ~GarbageCollectedBase(){}
 private:
 	bool mark_;
-	GarbageCollectedBase* next_;
 	int obj_size_;
 	friend class Visitor;
 	friend class TinyGC;

@@ -3,13 +3,9 @@
 //
 #pragma once
 #include "GCObject.h"
-#include "Container.h"
 #include <type_traits>
 
 class GarbageCollectedBase;
-
-template <typename T>
-class GarbageCollected;
 
 // Forward declarations
 template <typename T>
@@ -32,7 +28,6 @@ public:
 		mark_ = val;
 	}
 
-	//template <typename T>
 	void ObjTrace(GarbageCollectedBase* gc_obj) {
 		if (gc_obj == nullptr) return;
 		if (gc_obj->mark_ == this->mark_) return;
