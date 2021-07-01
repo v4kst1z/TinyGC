@@ -25,6 +25,7 @@ extern "C" void* __libc_stack_end;
 #include <errno.h>
 #endif
 
+#include <vector>
 #include "Common.h"
 
 // Forward declarations
@@ -102,7 +103,6 @@ private:
 	std::unordered_map<std::thread::id, ThreadState*> thread_to_stack_;
 	std::mutex ts_mxt_;
 	std::mutex alloc_mxt_;
-	GarbageCollectedBase* head_;
 	Visitor* visitor_;
 	GCPhase gc_phase_;
 	int bytes_allocated_;
@@ -120,8 +120,6 @@ T* TinyGC::MakeGarbageCollected(Args && ...args) {
 	objs_addr_.insert(new_obj);
 	this->bytes_allocated_ += new_obj->GetObjSize();
 	this->size_of_objects_++;
-	new_obj->next_ = head_;
-	head_ = new_obj;
 	return new_obj;
 }
 

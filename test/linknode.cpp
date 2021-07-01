@@ -22,7 +22,7 @@ private:
 
 auto test() {
 	HeapSet<LinkedNode>* vec = MakeGarbageCollected<HeapSet<LinkedNode>>();
-	for (int id = 0; id < 100; id++) {
+	for (int id = 0; id < 10; id++) {
 		auto p = MakeGarbageCollected<LinkedNode>(nullptr, id);
 		vec->insert(p);
 	}
@@ -38,7 +38,7 @@ int main() {
 	//GarbageCollectedBase* x = ret->operator[](200); 
 	ret->clear();
 	HeapVector<LinkedNode>* vec = MakeGarbageCollected<HeapVector<LinkedNode>>();
-	for (int id = 0; id < 100; id++) {
+	for (int id = 0; id < 10; id++) {
 		auto p = MakeGarbageCollected<LinkedNode>(nullptr, id);
 		vec->push_back(p);
 	}

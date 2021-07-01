@@ -24,18 +24,16 @@ void test1() {
 
 void test2() {
 	HeapMap<LinkedNode, std::string>* p = MakeGarbageCollected<HeapMap<LinkedNode, std::string>>();
-	for (int id = 0; id < 100; id++) {
+	for (int id = 0; id < 10; id++) {
 		auto t = MakeGarbageCollected<LinkedNode>(nullptr, id);
 		p->insert(t, "122");
-		//p->erase(t);
-		std::cout << p->at(t) << std::endl;
 	}
 	
 }
 
 void test3() {
 	HeapMap<int, LinkedNode>* p = MakeGarbageCollected<HeapMap<int, LinkedNode>>();
-	for (int id = 0; id < 100; id++) {
+	for (int id = 0; id < 10; id++) {
 		auto t = MakeGarbageCollected<LinkedNode>(nullptr, id);
 		p->insert(id, t);
 		//p->erase(id);

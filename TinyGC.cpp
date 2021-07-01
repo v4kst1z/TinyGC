@@ -2,15 +2,16 @@
 // Created by v4kst1z.
 //
 
-#include "TinyGC.h"
 #include <cassert>
+
 #include "Visitor.h"
+#include "TinyGC.h"
 
 TinyGC::TinyGC() :
     bytes_allocated_(0),
     size_of_objects_(0),
     gc_phase_(GCPhase::kNone),
-    head_(nullptr),
+    //head_(nullptr),
     gc_count_threshold_(120),
     gc_bytes_threshold_(0x1000) {
     visitor_ = new Visitor();
@@ -48,28 +49,16 @@ void TinyGC::Sweep() {
     LOG("\nSweep Start~");
     SetGCPhase(GCPhase::kSweeping);
     visitor_->SetMark(false);
-    GarbageCollectedBase* prev = nullptr;
-    GarbageCollectedBase* curr = head_;
-    while (curr) {
-        if (curr->mark_ != true) {
-            objs_addr_.erase(curr);
-            GarbageCollectedBase* del = curr;
-            if (prev == nullptr) {
-                head_ = curr->next_;
-                curr = curr->next_;
-            } else {
-                prev->next_ = curr->next_;
-                curr = prev->next_;
-            }
-            bytes_allocated_ -= del->obj_size_;
+
+    std::unordered_set<GarbageCollectedBase*> roots = objs_addr_;
+
+    for(auto &root: roots) {
+        if(root->mark_ != true) {
+            objs_addr_.erase(root);
+            bytes_allocated_ -= root->obj_size_;
             size_of_objects_--;
-            LOG("Object " << del << " is deleted!");
-            delete del;
-        }
-        else {
-            curr->mark_ = false;
-            prev = curr;
-            curr = curr->next_;
+            LOG("Object " << root << " is deleted!");
+            delete root;
         }
     }
     SetGCPhase(GCPhase::kNone);
