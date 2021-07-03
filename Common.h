@@ -8,7 +8,7 @@
     TypeName(const TypeName&);             \
     TypeName& operator=(const TypeName&)
 
-#ifndef DEBUG 
+#ifndef DEBUG
 #define DEBUG 1 // set debug mode
 #endif
 
