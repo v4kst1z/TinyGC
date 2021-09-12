@@ -2,30 +2,29 @@
 // Created by v4kst1z.
 //
 #pragma once
-#include <vector>
 #include <algorithm>
 #include <queue>
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 #include "GCObject.h"
 
 class GarbageCollectedBase;
 
-template<typename T>
+template <typename T>
 class Member;
 
 class Visitor;
 
-template<typename T>
+template <typename T>
 class HeapVector final : public GarbageCollected<HeapVector<T>> {
  public:
   using Container = std::vector<Member<T> *>;
   HeapVector() = default;
 
   void Trace(Visitor *visitor) const override {
-    for (auto &elem: vec_)
-      visitor->Trace(*elem);
+    for (auto &elem : vec_) visitor->Trace(*elem);
   }
 
   GarbageCollectedBase *operator[](std::size_t nIndex) {
@@ -47,30 +46,24 @@ class HeapVector final : public GarbageCollected<HeapVector<T>> {
     }
   }
 
-  size_t size() {
-    return vec_.size();
-  }
+  size_t size() { return vec_.size(); }
 
-  void clear() {
-    vec_.clear();
-  }
+  void clear() { vec_.clear(); }
 
-  void push_back(T *t) {
-    vec_.push_back(new Member<T>(t));
-  }
+  void push_back(T *t) { vec_.push_back(new Member<T>(t)); }
+
  private:
   Container vec_;
 };
 
-template<typename T>
+template <typename T>
 class HeapDeque final : public GarbageCollected<HeapDeque<T>> {
  public:
   using Container = std::deque<Member<T> *>;
   HeapDeque() = default;
 
   void Trace(Visitor *visitor) const override {
-    for (size_t id = 0; id < dque_.size(); id++)
-      visitor->Trace(*dque_[id]);
+    for (size_t id = 0; id < dque_.size(); id++) visitor->Trace(*dque_[id]);
   }
 
   GarbageCollectedBase *operator[](std::size_t nIndex) {
@@ -83,53 +76,41 @@ class HeapDeque final : public GarbageCollected<HeapDeque<T>> {
   }
 
   GarbageCollectedBase *front() {
-    if (size())
-      return dque_.front()->GetRaw();
+    if (size()) return dque_.front()->GetRaw();
   }
 
   GarbageCollectedBase *back() {
-    if (size())
-      return dque_.back()->GetRaw();
+    if (size()) return dque_.back()->GetRaw();
   }
 
   void pop_back() {
-    if (size())
-      dque_.pop_back();
+    if (size()) dque_.pop_back();
   }
 
   void pop_front() {
-    if (size())
-      return dque_.pop_front();
+    if (size()) return dque_.pop_front();
   }
 
-  size_t size() {
-    return dque_.size();
-  }
+  size_t size() { return dque_.size(); }
 
-  void clear() {
-    dque_.clear();
-  }
+  void clear() { dque_.clear(); }
 
-  void push_back(T *t) {
-    dque_.push_back(new Member<T>(t));
-  }
+  void push_back(T *t) { dque_.push_back(new Member<T>(t)); }
 
-  void push_front(T *t) {
-    dque_.push_back(new Member<T>(t));
-  }
+  void push_front(T *t) { dque_.push_back(new Member<T>(t)); }
+
  private:
   Container dque_;
 };
 
-template<typename T>
+template <typename T>
 class HeapSet final : public GarbageCollected<HeapSet<T>> {
  public:
   using Container = std::unordered_set<Member<T> *>;
   HeapSet() = default;
 
   void Trace(Visitor *visitor) const override {
-    for (auto &elem : set_)
-      visitor->Trace(*elem);
+    for (auto &elem : set_) visitor->Trace(*elem);
   }
 
   void erase(T *t) {
@@ -142,31 +123,20 @@ class HeapSet final : public GarbageCollected<HeapSet<T>> {
     }
   }
 
-  size_t count(T *t) {
-    return set_.count(new Member<T>(t));
-  }
+  size_t count(T *t) { return set_.count(new Member<T>(t)); }
 
-  size_t size() {
-    return set_.size();
-  }
+  size_t size() { return set_.size(); }
 
-  void clear() {
-    set_.clear();
-  }
+  void clear() { set_.clear(); }
 
-  void insert(T *t) {
-    set_.insert(new Member<T>(t));
-  }
+  void insert(T *t) { set_.insert(new Member<T>(t)); }
 
  private:
   Container set_;
 };
 
-template<
-    typename Key,
-    typename Value,
-    typename KeyBool = std::true_type,
-    typename ValueBool = std::true_type>
+template <typename Key, typename Value, typename KeyBool = std::true_type,
+          typename ValueBool = std::true_type>
 class HeapMap final : public GarbageCollected<HeapMap<Key, Value>> {
  public:
   using Container = std::unordered_map<Member<Key> *, Member<Value> *>;
@@ -202,64 +172,48 @@ class HeapMap final : public GarbageCollected<HeapMap<Key, Value>> {
     return nullptr;
   }
 
-  size_t size() {
-    return map_.size();
-  }
+  size_t size() { return map_.size(); }
 
-  void clear() {
-    map_.clear();
-  }
+  void clear() { map_.clear(); }
 
  private:
   Container map_;
 };
 
-template<typename Key, typename Value>
-class HeapMap<
-    Key,
-    Value,
-    std::integral_constant<bool, !std::is_base_of<GarbageCollectedBase, Key>::value>,
-    std::integral_constant<bool, !std::is_base_of<GarbageCollectedBase, Value>::value>
-> final : public GarbageCollected<HeapMap<Key, Value>> {
+template <typename Key, typename Value>
+class HeapMap<Key, Value,
+              std::integral_constant<
+                  bool, !std::is_base_of<GarbageCollectedBase, Key>::value>,
+              std::integral_constant<
+                  bool, !std::is_base_of<GarbageCollectedBase, Value>::value>>
+    final : public GarbageCollected<HeapMap<Key, Value>> {
  public:
   using Container = std::unordered_map<Key, Value>;
   HeapMap() = default;
 
-  void insert(Key k, Value val) {
-    map_.insert({k, val});
-  }
+  void insert(Key k, Value val) { map_.insert({k, val}); }
 
-  void insert(Key &k, Value &val) {
-    map_.insert({k, val});
-  }
+  void insert(Key &k, Value &val) { map_.insert({k, val}); }
 
-  void erase(Key &k) {
-    map_.erase(k);
-  }
+  void erase(Key &k) { map_.erase(k); }
 
-  Value at(Key &k) {
-    return map_.at(k);
-  }
+  Value at(Key &k) { return map_.at(k); }
 
-  size_t size() {
-    return map_.size();
-  }
+  size_t size() { return map_.size(); }
 
-  void clear() {
-    map_.clear();
-  }
+  void clear() { map_.clear(); }
 
  private:
   Container map_;
 };
 
-template<typename Key, typename Value>
-class HeapMap<
-    Key,
-    Value,
-    std::integral_constant<bool, std::is_base_of<GarbageCollectedBase, Key>::value>,
-    std::integral_constant<bool, !std::is_base_of<GarbageCollectedBase, Value>::value>
-> final : public GarbageCollected<HeapMap<Key, Value>> {
+template <typename Key, typename Value>
+class HeapMap<Key, Value,
+              std::integral_constant<
+                  bool, std::is_base_of<GarbageCollectedBase, Key>::value>,
+              std::integral_constant<
+                  bool, !std::is_base_of<GarbageCollectedBase, Value>::value>>
+    final : public GarbageCollected<HeapMap<Key, Value>> {
  public:
   using Container = std::unordered_map<Member<Key> *, Value>;
   HeapMap() = default;
@@ -290,28 +244,23 @@ class HeapMap<
         return it->second;
       }
     }
-
   }
 
-  size_t size() {
-    return map_.size();
-  }
+  size_t size() { return map_.size(); }
 
-  void clear() {
-    map_.clear();
-  }
+  void clear() { map_.clear(); }
 
  private:
   Container map_;
 };
 
-template<typename Key, typename Value>
-class HeapMap<
-    Key,
-    Value,
-    std::integral_constant<bool, !std::is_base_of<GarbageCollectedBase, Key>::value>,
-    std::integral_constant<bool, std::is_base_of<GarbageCollectedBase, Value>::value>
-> final : public GarbageCollected<HeapMap<Key, Value>> {
+template <typename Key, typename Value>
+class HeapMap<Key, Value,
+              std::integral_constant<
+                  bool, !std::is_base_of<GarbageCollectedBase, Key>::value>,
+              std::integral_constant<
+                  bool, std::is_base_of<GarbageCollectedBase, Value>::value>>
+    final : public GarbageCollected<HeapMap<Key, Value>> {
  public:
   using Container = std::unordered_map<Key, Member<Value> *>;
   HeapMap() = default;
@@ -326,23 +275,14 @@ class HeapMap<
     map_.insert({k, new Member<Value>(val)});
   }
 
-  void erase(Key &k) {
-    map_.erase(k);
-  }
+  void erase(Key &k) { map_.erase(k); }
 
-  GarbageCollectedBase *at(Key &k) {
-    return map_.at(k)->GetRaw();
-  }
+  GarbageCollectedBase *at(Key &k) { return map_.at(k)->GetRaw(); }
 
-  size_t size() {
-    return map_.size();
-  }
+  size_t size() { return map_.size(); }
 
-  void clear() {
-    map_.clear();
-  }
+  void clear() { map_.clear(); }
 
  private:
   Container map_;
 };
-

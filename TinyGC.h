@@ -1,31 +1,33 @@
 ﻿//
 // Created by v4kst1z.
 //
-// 
+//
 // TinyGC.h: 标准系统包含文件的包含文件
 // 或项目特定的包含文件。
 
 #pragma once
 
 #include <iostream>
-#include <unordered_set>
-#include <unordered_map>
-#include <thread>
 #include <mutex>
+#include <thread>
+#include <unordered_map>
+#include <unordered_set>
 
 #if defined(_WIN32)
-#include <cstddef>
+#include <intrin.h>
 #include <windows.h>
 #include <winnt.h>
-#include <intrin.h>
+
+#include <cstddef>
 #elif defined(__GLIBC__)
 extern "C" void *__libc_stack_end;
+#include <errno.h>
 #include <pthread.h>
 #include <stdio.h>
-#include <errno.h>
 #endif
 
 #include <vector>
+
 #include "Common.h"
 
 // Forward declarations
@@ -59,16 +61,18 @@ class TinyGC {
 
   void MarkSweepGC();
 
-  template<typename T, typename ...Args>
+  template <typename T, typename... Args>
   T *MakeGarbageCollected(Args &&...args);
 
   DISALLOW_COPY_AND_ASSIGN(TinyGC);
+
  private:
   class ThreadState {
    public:
-    explicit ThreadState(bool main = false) : stack_end_(nullptr),
-                                              main_thread_(main),
-                                              thread_id_(std::this_thread::get_id()) {
+    explicit ThreadState(bool main = false)
+        : stack_end_(nullptr),
+          main_thread_(main),
+          thread_id_(std::this_thread::get_id()) {
       stack_start_ = GetStackStart(main_thread_);
     }
     void GetCurrentStackPosition();
@@ -77,6 +81,7 @@ class TinyGC {
 
     void *GetStackEndAddr() { return stack_end_; }
     std::thread::id GetThreadId() { return thread_id_; }
+
    private:
     void *GetStackStart(bool main);
 
@@ -110,11 +115,11 @@ class TinyGC {
   int gc_bytes_threshold_;
 };
 
-template<typename T, typename ...Args>
+template <typename T, typename... Args>
 T *TinyGC::MakeGarbageCollected(Args &&...args) {
   std::unique_lock<std::mutex> lck(alloc_mxt_);
   CheckThreshold();
-  T *new_obj = ::new(malloc(sizeof(T))) T(std::forward<Args>(args)...);
+  T *new_obj = ::new (malloc(sizeof(T))) T(std::forward<Args>(args)...);
   LOG("Object is allocated at " << new_obj);
   objs_addr_.insert(new_obj);
   this->bytes_allocated_ += new_obj->GetObjSize();

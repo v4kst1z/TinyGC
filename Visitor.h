@@ -2,20 +2,21 @@
 // Created by v4kst1z.
 //
 #pragma once
-#include "GCObject.h"
 #include <type_traits>
+
+#include "GCObject.h"
 
 class GarbageCollectedBase;
 
 // Forward declarations
-template<typename T>
+template <typename T>
 class Member;
 
 class Visitor {
  public:
-  Visitor() : mark_(false) {};
+  Visitor() : mark_(false){};
 
-  template<typename T>
+  template <typename T>
   void Trace(const Member<T> &mem) {
     if (mem.GetRaw() == nullptr) return;
     if (std::is_polymorphic<T>::value) {
@@ -24,9 +25,7 @@ class Visitor {
     }
   }
 
-  void SetMark(bool val) {
-    mark_ = val;
-  }
+  void SetMark(bool val) { mark_ = val; }
 
   void ObjTrace(GarbageCollectedBase *gc_obj) {
     if (gc_obj == nullptr) return;
@@ -34,8 +33,7 @@ class Visitor {
     gc_obj->mark_ = this->mark_;
     gc_obj->Trace(this);
   }
+
  private:
   bool mark_;
 };
-
-
